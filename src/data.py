@@ -160,6 +160,11 @@ def load_embeddings(dataset_name, encoding_model, encoding_model_name, perturbat
         np.save(f'{save_path}/y_test_pos.npy', y_test_pos)
         np.save(f'{save_path}/y_test_neg.npy', y_test_neg)
 
+        print(f'Train pos sentence embeddings shape: {X_train_pos.shape}')
+        print(f'Train neg sentence embeddings shape: {X_train_neg.shape}')
+        print(f'Test pos sentence embeddings shape: {X_test_pos.shape}')
+        print(f'Test neg sentence embeddings shape: {X_test_neg.shape}')
+
     # # Print the shape of the rotated embedded sentences
     # print(f'Train pos sentence embeddings shape: {X_train_pos.shape}')
     # print(f'Train neg sentence embeddings shape: {X_train_neg.shape}')
