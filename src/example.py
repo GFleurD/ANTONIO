@@ -3,7 +3,7 @@ from perturbations import create_perturbations
 from hyperrectangles import load_hyperrectangles
 from train import train_base, train_adversarial
 from property_parser import parse_properties
-from results import calculate_accuracy, calculate_perturbations_accuracy, calculate_marabou_results, calculate_number_of_sentences_inside_the_verified_hyperrectangles, calculate_cosine_perturbations_filtering
+from results import calculate_accuracy, calculate_perturbations_accuracy, calculate_cosine_perturbations_filtering #, calculate_marabou_results, calculate_number_of_sentences_inside_the_verified_hyperrectangles
 from tensorflow import keras
 import os
 import nltk
@@ -78,8 +78,8 @@ if __name__ == '__main__':
     model.save(f'{model_path}/{perturbation_name}_{seed}')
 
     # Parse properties to VNNlib and Marabou formats
-    parse_properties(dataset_names, encoding_models, hyperrectangles_names, target='vnnlib', path=path)
-    parse_properties(dataset_names, encoding_models, hyperrectangles_names, target='marabou', path=path)
+   # parse_properties(dataset_names, encoding_models, hyperrectangles_names, target='vnnlib', path=path)
+   # parse_properties(dataset_names, encoding_models, hyperrectangles_names, target='marabou', path=path)
 
     # Results
     calculate_accuracy(dataset_names, encoding_models, batch_size, path=path)
