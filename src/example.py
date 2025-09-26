@@ -20,9 +20,10 @@ def get_model(n_components):
 
 
 if __name__ == '__main__':
-    # Variables
+    # Variables to pick data, model etc
     path = 'datasets'
-    dataset_names = ['ruarobot']
+    dataset_names = ['medical']
+    #written as dict to easily expand for other models
     encoding_models = {'all-MiniLM-L6-v2': 'sbert22M'}
     og_perturbation_name = 'original'
     perturbation_names = ['character']
@@ -32,14 +33,16 @@ if __name__ == '__main__':
     batch_size = 64
     seed = 42
     epochs = 30
-    pgd_steps = 5
+    pgd_steps = 5 
 
+#by having galse for lots below means it does it all from scratch
     load_saved_embeddings = False
     load_saved_align_mat = False
     load_saved_pca = False
     load_saved_perturbations = False
     load_saved_hyperrectangles = False
-    from_logits = True
+    from_logits = True #applies to loss functions in TensorFlow/Keras, so model outputs raw logits (un-normalised scores) not probabilities
+    #therefore this expects raw outputs and applies softmax internally
 
     # Derived variables
     dataset_name = dataset_names[0]
@@ -52,7 +55,7 @@ if __name__ == '__main__':
     data_o = load_data(dataset_name, path=path)
     X_train_pos_embedded_o, X_train_neg_embedded_o, X_test_pos_embedded_o, X_test_neg_embedded_o, y_train_pos_o, y_train_neg_o, y_test_pos_o, y_test_neg_o = load_embeddings(dataset_name, encoding_model, encoding_model_name, og_perturbation_name, load_saved_embeddings, load_saved_align_mat, data_o, path)
 
-    # Create pthe erturbations and embed them
+    # Create the perturbations and embed them
     data_p = create_perturbations(dataset_name, perturbation_name, data_o, path)
     X_train_pos_embedded_p, X_train_neg_embedded_p, X_test_pos_embedded_p, X_test_neg_embedded_p, y_train_pos_p, y_train_neg_p, y_test_pos_p, y_test_neg_p = load_embeddings(dataset_name, encoding_model, encoding_model_name, perturbation_name, load_saved_perturbations, load_saved_align_mat, data=data_p, path=path)
     

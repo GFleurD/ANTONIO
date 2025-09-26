@@ -5,6 +5,9 @@ import pickle as pk
 import pandas as pd
 import numpy as np
 import os
+import nltk
+# Ensure punkt_tab is downloaded
+nltk.download('punkt_tab')
 
 
 def load_data(dataset_name, path='datasets'):
@@ -84,6 +87,12 @@ def load_data(dataset_name, path='datasets'):
 
 
 def load_align_mat(dataset_name, encoding_model_name, data, load_saved_align_mat, path='datasets'):
+    #SVD finds the principal axes of the embeddings, and this function creates a rotation matrix to align the embeddings to canonical axes
+    #hence they can standardise the orientation of embeddings, and NN usually work better this way
+    #can reduce correlations between dimensions (whitening?)
+    #helps to make PCA, hyperrectangle and perturbation detection more consistent
+    #overall makes axes more meaningful and standardised
+    
     if load_saved_align_mat:
         align_mat = np.load(f'{path}/{dataset_name}/embeddings/{encoding_model_name}/align_mat.npy')
 
@@ -123,14 +132,15 @@ def load_embeddings(dataset_name, encoding_model, encoding_model_name, perturbat
         y_test_pos = data[6]
         y_test_neg = data[7]
 
-        # Embed the sentences
+        # Embed the sentences - why does it embed them all separately? as adversarial examples may work differently in positive vs negative medical queries, and for looking at how well embeddings and alignment of class work later
+        #embeddings done per class keep positive and negative separation intact, and then alignments and pertubrations are class specific
         encoder = SentenceTransformer(f'{encoding_model}')
         X_train_pos = encoder.encode(X_train_pos, show_progress_bar=False)
         X_train_neg = encoder.encode(X_train_neg, show_progress_bar=False)
         X_test_pos = encoder.encode(X_test_pos, show_progress_bar=False)
         X_test_neg = encoder.encode(X_test_neg, show_progress_bar=False)
 
-        # Rotate the data
+        # Rotate the data using the computed matrices in align function
         align_mat = load_align_mat(dataset_name, encoding_model_name, X_train_pos, load_saved_align_mat, path='datasets')
         X_train_pos = np.matmul(X_train_pos, align_mat)
         X_train_neg = np.matmul(X_train_neg, align_mat)
@@ -160,6 +170,8 @@ def load_embeddings(dataset_name, encoding_model, encoding_model_name, perturbat
 
 
 def load_pca(dataset_name, encoding_model_name, load_saved_pca, X_train_pos, X_train_neg, X_test_pos, X_test_neg,  n_components=30, path='datasets'):
+    #do PCA on all rotated embeddings of strings - it reduces dimensionality but preserves variance, and we want tthe same PCA space for all classes
+    #hence where n_components is important as can  pick the amount of dimensions to reduce to 
     if load_saved_pca:
         with open(f'{path}/{dataset_name}/embeddings/{encoding_model_name}/pca.pkl', 'rb') as pickle_file:
             data_pca = pk.load(pickle_file)
