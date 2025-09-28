@@ -14,9 +14,11 @@ def calculate_accuracy(datasets, encoding_models, batch_size, path='datasets'):
                     'Dataset': [],
                     'Encoding Model': [],
                     'Model': [],
+                    'Train Accuracy': [],
                     'Train Precision': [],
                     'Train Recall': [],
                     'Train F1': [],
+                    'Test Accuracy': [],
                     'Test Precision': [],
                     'Test Recall': [],
                     'Test F1': [],
@@ -58,11 +60,12 @@ def calculate_accuracy(datasets, encoding_models, batch_size, path='datasets'):
                         FP_test += np.count_nonzero((y_pred - 1) * y_true)
                         FN_test += np.count_nonzero(y_pred * (y_true - 1))
                     
-
+                    accuracy_train = (TP_train + TN_train) / (TP_train + TN_train + FP_train + FN_train)
                     precision_train = TP_train / (TP_train + FP_train)
                     recall_train  = TP_train / (TP_train + FN_train)
                     f1_train  = 2 * precision_train  * recall_train  / (precision_train  + recall_train)
 
+                    accuracy_test = (TP_test + TN_test) / (TP_test + TN_test + FP_test + FN_test)
                     precision_test = TP_test / (TP_test + FP_test)
                     recall_test = TP_test / (TP_test + FN_test)
                     f1_test = 2 * precision_test * recall_test / (precision_test + recall_test)
@@ -70,9 +73,11 @@ def calculate_accuracy(datasets, encoding_models, batch_size, path='datasets'):
                     results_dict['Dataset'].append(dataset)
                     results_dict['Encoding Model'].append(encoding_name)
                     results_dict['Model'].append(filename)
+                    results_dict['Train Accuracy'].append(accuracy_train)
                     results_dict['Train Precision'].append(precision_train)
                     results_dict['Train Recall'].append(recall_train)
                     results_dict['Train F1'].append(f1_train)
+                    results_dict['Test Accuracy'].append(accuracy_test)
                     results_dict['Test Precision'].append(precision_test)
                     results_dict['Test Recall'].append(recall_test)
                     results_dict['Test F1'].append(f1_test)
@@ -95,9 +100,11 @@ def calculate_accuracy(datasets, encoding_models, batch_size, path='datasets'):
                     'Dataset': [],
                     'Encoding Model': [],
                     'Model': [],
+                    'Train Accuracy': [],
                     'Train Precision': [],
                     'Train Recall': [],
                     'Train F1': [],
+                    'Test Accuracy': [],
                     'Test Precision': [],
                     'Test Recall': [],
                     'Test F1': [],
@@ -109,10 +116,12 @@ def calculate_accuracy(datasets, encoding_models, batch_size, path='datasets'):
             for model in unique_models:
                 model_df = results_df.loc[(results_df['Dataset'] == dataset) & (results_df['Encoding Model'] == encoding_model) & (results_df['Model'] == model)]
 
+                accuracy_train = model_df['Train Accuracy']
                 precision_train = model_df['Train Precision']
                 recall_train  = model_df['Train Recall']
                 f1_train  = model_df['Train F1']
 
+                accuracy_test = model_df['Test Accuracy']
                 precision_test = model_df['Test Precision']
                 recall_test = model_df['Test Recall']
                 f1_test = model_df['Test F1']
@@ -120,9 +129,11 @@ def calculate_accuracy(datasets, encoding_models, batch_size, path='datasets'):
                 mean_std_dict['Dataset'].append(dataset)
                 mean_std_dict['Encoding Model'].append(encoding_model)
                 mean_std_dict['Model'].append(model)
+                mean_std_dict['Train Accuracy'].append(f'{np.mean(accuracy_train):.4f} ± {np.std(accuracy_train):.4f}')
                 mean_std_dict['Train Precision'].append(f'{np.mean(precision_train):.4f} ± {np.std(precision_train):.4f}')
                 mean_std_dict['Train Recall'].append(f'{np.mean(recall_train):.4f} ± {np.std(recall_train):.4f}')
                 mean_std_dict['Train F1'].append(f'{np.mean(f1_train):.4f} ± {np.std(f1_train):.4f}')
+                mean_std_dict['Test Accuracy'].append(f'{np.mean(accuracy_test):.4f} ± {np.std(accuracy_test):.4f}')
                 mean_std_dict['Test Precision'].append(f'{np.mean(precision_test):.4f} ± {np.std(precision_test):.4f}')
                 mean_std_dict['Test Recall'].append(f'{np.mean(recall_test):.4f} ± {np.std(recall_test):.4f}')
                 mean_std_dict['Test F1'].append(f'{np.mean(f1_test):.4f} ± {np.std(f1_test):.4f}')
