@@ -215,7 +215,7 @@ def prepare_data_for_training(X_train_pos, X_train_neg, X_test_pos, X_test_neg, 
     # Get the train and test datasets transformations from tensorflow
     train_dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train))
     test_dataset = tf.data.Dataset.from_tensor_slices((X_test, y_test))
-
+    print("dataset_example:{}",train_dataset)
     train_dataset = train_dataset.shuffle(buffer_size=1024).batch(batch_size)
     test_dataset = test_dataset.batch(batch_size)
 
